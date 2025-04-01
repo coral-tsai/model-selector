@@ -9,7 +9,7 @@ export default function Login({ onLogin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5001/auth/login", {
+      const res = await axios.post("http://localhost:5001/api/login", {
         username,
         password,
       });
