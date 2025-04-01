@@ -41,7 +41,9 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect("mongodb://localhost:5001/model-selector");
+mongoose.connect(
+  "mongodb+srv://coraltsai:i3V0yjag7yLaDGeY@cluster0.1i7xinm.mongodb.net/model_selector?retryWrites=true&w=majority"
+);
 
 const User = mongoose.model(
   "User",

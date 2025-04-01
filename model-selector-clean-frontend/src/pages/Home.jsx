@@ -31,7 +31,7 @@ export default function Home() {
   // }, []);
   useEffect(() => {
     axios
-      .get("http://localhost:5003/photos")
+      .get("http://localhost:5001/photos")
       .then((res) => {
         const data = res.data;
         setPhotos(data);
@@ -53,7 +53,7 @@ export default function Home() {
     });
 
     axios
-      .post("http://localhost:5003/swipes", {
+      .post("http://localhost:5001/swipes", {
         userId: userId,
         photoUrl: photo.url,
         direction: dir,
@@ -110,3 +110,13 @@ export default function Home() {
     </div>
   );
 }
+
+// export default function Home({ userId }) {
+//   return (
+//     <div className="text-center mt-10">
+//       <h2 className="text-2xl font-bold">🎉 登入成功！</h2>
+//       <p className="mt-4">目前登入的使用者 ID 是：</p>
+//       <code className="text-green-600">{userId}</code>
+//     </div>
+//   );
+// }
