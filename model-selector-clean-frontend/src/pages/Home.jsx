@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import TinderCard from "react-tinder-card";
 
-// import { API_BASE } from "/src/config";
-
 export default function Home({ userId }) {
   const [photos, setPhotos] = useState([]);
   const [index, setIndex] = useState(0);
@@ -32,7 +30,7 @@ export default function Home({ userId }) {
   return (
     <div className="text-center">
       {current ? (
-        <div className="p-4 flex flex-col items-center">
+        <div className="relative w-80 h-[28rem]">
           <TinderCard
             key={current._id}
             onSwipe={(dir) => handleSwipe(current._id, dir)}
