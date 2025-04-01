@@ -63,6 +63,21 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+// ✅ 回傳尚未被此 user 滑過的圖片
+app.get("/photos", async (req, res) => {
+  const { userId } = req.query;
+  const swipedIds = await Swipe.find({ userId }).distinct("photoId");
+  const photos = await Photo.find({ _id: { $nin: swipedIds } });
+  res.json(photos);
+});
+
+// ✅ 儲存滑動紀錄
+app.post("/swipes", async (req, res) => {
+  const { userId, photoId, direction } = req.body;
+  await Swipe.create({ userId, photoId, direction });
+  res.json({ success: true });
+});
+
 app.listen(5001, () =>
   console.log("✅ Backend running on http://localhost:5001")
 );
