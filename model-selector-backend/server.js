@@ -66,3 +66,12 @@ app.post("/api/login", async (req, res) => {
 app.listen(5001, () =>
   console.log("✅ Backend running on http://localhost:5001")
 );
+
+app.get("/photos", async (req, res) => {
+  const photos = await mongoose.connection.db
+    .collection("photos")
+    .find()
+    .toArray();
+
+  res.json(photos);
+});
