@@ -54,7 +54,7 @@ export default function Home() {
 
     axios
       .post("http://localhost:5003/swipes", {
-        userId,
+        userId: userId,
         photoUrl: photo.url,
         direction: dir,
       })
