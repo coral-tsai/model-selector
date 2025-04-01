@@ -53,6 +53,33 @@ const User = mongoose.model(
   })
 );
 
+const Swipe = mongoose.model(
+  "Swipe",
+  new mongoose.Schema({
+    userId: String,
+    photoId: String,
+    direction: String,
+  })
+);
+
+const Photo = mongoose.model(
+  "Photo",
+  new mongoose.Schema({
+    url: String,
+    country: String,
+    age: Number,
+    hairColor: String,
+  })
+);
+
+// const User = mongoose.model(
+//   "User",
+//   new mongoose.Schema({
+//     username: String,
+//     password: String,
+//   })
+// );
+
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username, password });
@@ -64,7 +91,7 @@ app.post("/api/login", async (req, res) => {
 });
 
 // ✅ 回傳尚未被此 user 滑過的圖片
-app.get("/photos", async (req, res) => {
+app.get("/api/photos", async (req, res) => {
   const { userId } = req.query;
   const swipedIds = await Swipe.find({ userId }).distinct("photoId");
   const photos = await Photo.find({ _id: { $nin: swipedIds } });
@@ -72,7 +99,7 @@ app.get("/photos", async (req, res) => {
 });
 
 // ✅ 儲存滑動紀錄
-app.post("/swipes", async (req, res) => {
+app.post("/api/swipes", async (req, res) => {
   const { userId, photoId, direction } = req.body;
   await Swipe.create({ userId, photoId, direction });
   res.json({ success: true });

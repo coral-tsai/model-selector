@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import TinderCard from "react-tinder-card";
-
-// import { API_BASE } from "/src/config";
+import { API_BASE } from "/src/config";
 
 export default function Home({ userId }) {
   const [photos, setPhotos] = useState([]);
@@ -10,16 +8,14 @@ export default function Home({ userId }) {
 
   useEffect(() => {
     const fetchPhotos = async () => {
-      const res = await axios.get(
-        `http://localhost:5001/api/photos?userId=${userId}`
-      );
+      const res = await axios.get(`${API_BASE}/photos?userId=${userId}`);
       setPhotos(res.data);
     };
     fetchPhotos();
   }, [userId]);
 
   const handleSwipe = async (photoId, direction) => {
-    await axios.post("http://localhost:5001/api/swipes", {
+    await axios.post(`${API_BASE}/swipes`, {
       userId,
       photoId,
       direction,
@@ -32,18 +28,12 @@ export default function Home({ userId }) {
   return (
     <div className="text-center">
       {current ? (
-        <div className="p-4 flex flex-col items-center">
-          <TinderCard
-            key={current._id}
-            onSwipe={(dir) => handleSwipe(current._id, dir)}
-            preventSwipe={["up", "down"]}
-          >
-            <img
-              src={current.url}
-              alt="model"
-              className="w-80 h-96 object-cover rounded-xl shadow"
-            />
-          </TinderCard>
+        <div className="p-4">
+          <img
+            src={current.url}
+            alt="model"
+            className="w-80 h-96 object-cover rounded-xl shadow"
+          />
           <div className="mt-4 flex justify-center gap-4">
             <button
               onClick={() => handleSwipe(current._id, "left")}
