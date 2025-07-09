@@ -10,11 +10,21 @@ router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ username });
     if (!user || user.password !== password) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ 
+        success: false,
+        message: "帳號或密碼錯誤" 
+      });
     }
-    res.json({ message: "Login successful", userId: user.username });
+    res.json({ 
+      success: true,
+      message: "登入成功", 
+      userId: user.username 
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ 
+      success: false,
+      message: err.message 
+    });
   }
 });
 

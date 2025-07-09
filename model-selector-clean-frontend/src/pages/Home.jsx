@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import TinderCard from "react-tinder-card";
 
-export default function Home({ userId }) {
+export default function Home({ userId, onLogout }) {
   const [photos, setPhotos] = useState([]);
   const [index, setIndex] = useState(0);
 
@@ -29,6 +29,16 @@ export default function Home({ userId }) {
 
   return (
     <div className="text-center">
+      {/* 登出按鈕 */}
+      <div className="absolute top-4 right-4">
+        <button
+          onClick={onLogout}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          登出
+        </button>
+      </div>
+      
       {current ? (
         <div className="relative w-80 h-[28rem]">
           <TinderCard
