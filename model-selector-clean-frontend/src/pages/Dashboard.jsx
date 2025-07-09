@@ -35,6 +35,44 @@ export default function Dashboard({ onLogout }) {
     return direction === 'right' ? '👍' : '👎';
   };
 
+  // 將 swipes 按 model 分組
+  const groupSwipesByModel = () => {
+    const grouped = {};
+    
+    swipes.forEach(swipe => {
+      if (swipe.photoId) {
+        const modelId = swipe.photoId._id;
+        if (!grouped[modelId]) {
+          grouped[modelId] = {
+            model: swipe.photoId,
+            likes: 0,
+            dislikes: 0,
+            totalSwipes: 0,
+            lastSwipeTime: null
+          };
+        }
+        
+        if (swipe.direction === 'right') {
+          grouped[modelId].likes++;
+        } else {
+          grouped[modelId].dislikes++;
+        }
+        
+        grouped[modelId].totalSwipes++;
+        
+        // 記錄最後一次滑動時間
+        if (!grouped[modelId].lastSwipeTime || new Date(swipe.timestamp) > new Date(grouped[modelId].lastSwipeTime)) {
+          grouped[modelId].lastSwipeTime = swipe.timestamp;
+        }
+      }
+    });
+    
+    // 轉換為陣列並按最後滑動時間排序
+    return Object.values(grouped).sort((a, b) => 
+      new Date(b.lastSwipeTime) - new Date(a.lastSwipeTime)
+    );
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -54,6 +92,8 @@ export default function Dashboard({ onLogout }) {
       </div>
     );
   }
+
+  const groupedSwipes = groupSwipesByModel();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -76,39 +116,63 @@ export default function Dashboard({ onLogout }) {
               </button>
             </div>
           </div>
-          <p className="mt-2 text-gray-600">查看所有滑動紀錄</p>
+          <p className="mt-2 text-gray-600">查看所有 model 的篩選統計</p>
         </div>
 
-        {swipes.length === 0 ? (
+        {groupedSwipes.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">目前沒有任何滑動紀錄</p>
           </div>
         ) : (
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <ul className="divide-y divide-gray-200">
-              {swipes.map((swipe) => (
-                <li key={swipe._id} className="px-6 py-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      {swipe.photoId && (
-                        <img
-                          src={swipe.photoId.url}
-                          alt="model"
-                          className="w-16 h-16 object-cover rounded-lg"
-                        />
-                      )}
-                      <div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <span className="text-2xl">
-                        {getDirectionIcon(swipe.direction)}
-                      </span>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {groupedSwipes.map((group) => (
+              <div key={group.model._id} className="bg-white shadow rounded-lg overflow-hidden">
+                <div className="p-6">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <img
+                      src={group.model.url}
+                      alt="model"
+                      className="w-20 h-20 object-cover rounded-lg"
+                    />
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Model #{group.model._id.slice(-6)}
+                      </h3>
                     </div>
                   </div>
-                </li>
-              ))}
-            </ul>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-700">總滑動次數:</span>
+                      <span className="text-lg font-bold text-gray-900">{group.totalSwipes}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-700 flex items-center">
+                        <span className="mr-2">👍 喜歡:</span>
+                      </span>
+                      <span className="text-lg font-bold text-green-600">{group.likes}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-700 flex items-center">
+                        <span className="mr-2">👎 不喜歡:</span>
+                      </span>
+                      <span className="text-lg font-bold text-red-600">{group.dislikes}</span>
+                    </div>
+                    
+                    <div className="pt-2 border-t border-gray-200">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-gray-700">喜歡率:</span>
+                        <span className="text-lg font-bold text-blue-600">
+                          {group.totalSwipes > 0 ? Math.round((group.likes / group.totalSwipes) * 100) : 0}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
