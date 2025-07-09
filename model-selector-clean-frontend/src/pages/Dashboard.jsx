@@ -67,10 +67,17 @@ export default function Dashboard({ onLogout }) {
       }
     });
     
-    // 轉換為陣列並按最後滑動時間排序
-    return Object.values(grouped).sort((a, b) => 
-      new Date(b.lastSwipeTime) - new Date(a.lastSwipeTime)
-    );
+    // 轉換為陣列並按總滑動次數和喜歡率排序
+    return Object.values(grouped).sort((a, b) => {
+      // 先按總滑動次數排序（從高到低）
+      if (a.totalSwipes !== b.totalSwipes) {
+        return b.totalSwipes - a.totalSwipes;
+      }
+      // 總滑動次數相同時，按喜歡率排序（從高到低）
+      const rateA = a.totalSwipes > 0 ? (a.likes / a.totalSwipes) : 0;
+      const rateB = b.totalSwipes > 0 ? (b.likes / b.totalSwipes) : 0;
+      return rateB - rateA;
+    });
   };
 
   if (loading) {
