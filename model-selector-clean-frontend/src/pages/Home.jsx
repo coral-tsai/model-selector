@@ -26,6 +26,7 @@ export default function Home({ userId, onLogout }) {
   };
 
   const current = photos[index];
+  const remainingPhotos = photos.length - index;
 
   return (
     <div className="text-center">
@@ -38,6 +39,15 @@ export default function Home({ userId, onLogout }) {
           登出
         </button>
       </div>
+      
+      {/* 進度條 */}
+      {remainingPhotos > 0 && (
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm text-gray-600">還有 {remainingPhotos} 張</span>
+          </div>
+        </div>
+      )}
       
       {current ? (
         <div className="relative w-80 h-[28rem]">
