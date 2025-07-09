@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Home from "./pages/Home"; // 滑圖卡主畫面
+import Dashboard from "./pages/Dashboard";
 
 export default function App() {
   const [userId, setUserId] = useState(null);
@@ -29,8 +31,18 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen w-screen bg-gray-100 flex items-center justify-center">
-      {userId ? <Home userId={userId} onLogout={handleLogout} /> : <Login onLogin={setUserId} />}
-    </div>
+    <Router>
+      <div className="h-screen w-screen bg-gray-100">
+        {userId ? (
+          <Routes>
+            <Route path="/" element={<Home userId={userId} onLogout={handleLogout} />} />
+            <Route path="/dashboard" element={<Dashboard onLogout={handleLogout} />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        ) : (
+          <Login onLogin={setUserId} />
+        )}
+      </div>
+    </Router>
   );
 }

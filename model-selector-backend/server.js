@@ -1,37 +1,3 @@
-// // server.js
-// require("dotenv").config();
-// const express = require("express");
-// const mongoose = require("mongoose");
-// const cors = require("cors");
-
-// const app = express();
-// app.use(cors());
-// app.use(express.json());
-
-// // Connect to MongoDB
-// mongoose
-//   .connect(process.env.MONGO_URI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => console.log("✅ MongoDB Connected"))
-//   .catch((err) => console.error(err));
-
-// // Routes
-// const photoRoutes = require("./routes/photos");
-// app.use("/photos", photoRoutes);
-
-// const PORT = process.env.PORT || 5003;
-// app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-
-// require("dotenv").config();
-
-// const swipeRoutes = require("./routes/swipes");
-// app.use("/swipes", swipeRoutes);
-
-// const authRoutes = require("./routes/auth");
-// app.use("/auth", authRoutes);
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -43,7 +9,9 @@ app.use(bodyParser.json());
 
 mongoose.connect(
   "mongodb+srv://coraltsai:i3V0yjag7yLaDGeY@cluster0.1i7xinm.mongodb.net/model_selector?retryWrites=true&w=majority"
-);
+)
+.then(() => console.log("✅ MongoDB Connected"))
+.catch((err) => console.error("❌ MongoDB connection error:", err));
 
 const User = mongoose.model(
   "User",
@@ -57,8 +25,9 @@ const Swipe = mongoose.model(
   "Swipe",
   new mongoose.Schema({
     userId: String,
-    photoId: String,
+    photoId: { type: mongoose.Schema.Types.ObjectId, ref: 'Photo' },
     direction: String,
+    timestamp: { type: Date, default: Date.now },
   })
 );
 
@@ -72,14 +41,6 @@ const Photo = mongoose.model(
   })
 );
 
-// const User = mongoose.model(
-//   "User",
-//   new mongoose.Schema({
-//     username: String,
-//     password: String,
-//   })
-// );
-
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username, password });
@@ -90,7 +51,6 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// ✅ 回傳尚未被此 user 滑過的圖片
 app.get("/api/photos", async (req, res) => {
   const { userId } = req.query;
   const swipedIds = await Swipe.find({ userId }).distinct("photoId");
@@ -98,22 +58,29 @@ app.get("/api/photos", async (req, res) => {
   res.json(photos);
 });
 
-// ✅ 儲存滑動紀錄
 app.post("/api/swipes", async (req, res) => {
   const { userId, photoId, direction } = req.body;
   await Swipe.create({ userId, photoId, direction });
   res.json({ success: true });
 });
 
-app.listen(5001, () =>
-  console.log("✅ Backend running on http://localhost:5001")
-);
+app.get("/api/swipes", async (req, res) => {
+  try {
+    const swipes = await Swipe.find().populate('photoId');
+    res.json(swipes);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.get("/photos", async (req, res) => {
   const photos = await mongoose.connection.db
     .collection("photos")
     .find()
     .toArray();
-
   res.json(photos);
 });
+
+app.listen(5001, () =>
+  console.log("✅ Backend running on http://localhost:5001")
+);

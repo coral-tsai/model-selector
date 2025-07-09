@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import TinderCard from "react-tinder-card";
+import Header from "../components/Header";
 
 export default function Home({ userId, onLogout }) {
   const [photos, setPhotos] = useState([]);
@@ -29,16 +30,9 @@ export default function Home({ userId, onLogout }) {
   const remainingPhotos = photos.length - index;
 
   return (
-    <div className="text-center">
-      {/* 登出按鈕 */}
-      <div className="absolute top-4 right-4">
-        <button
-          onClick={onLogout}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-        >
-          登出
-        </button>
-      </div>
+    <div className="h-screen flex flex-col">
+      <Header onLogout={onLogout} />
+      <div className="flex-1 flex items-center justify-center text-center">
       
       {/* 進度條 */}
       {remainingPhotos > 0 && (
@@ -80,6 +74,7 @@ export default function Home({ userId, onLogout }) {
       ) : (
         <p className="text-xl mt-10">🎉 已經沒有圖片了！</p>
       )}
+      </div>
     </div>
   );
 }
