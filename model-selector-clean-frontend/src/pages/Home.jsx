@@ -32,7 +32,7 @@ export default function Home({ userId, onLogout }) {
   return (
     <div className="h-screen flex flex-col">
       <Header onLogout={onLogout} />
-      <div className="flex-1 flex items-center justify-center text-center">
+      <div className="flex-1 flex flex-col items-center justify-center text-center">
       
       {/* 進度條 */}
       {remainingPhotos > 0 && (

@@ -98,20 +98,11 @@ export default function Dashboard({ onLogout }) {
                         />
                       )}
                       <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {swipe.photoId ? `Model ${swipe.photoId._id}` : '未知圖片'}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          使用者 ID: {swipe.userId}
-                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
                       <span className="text-2xl">
                         {getDirectionIcon(swipe.direction)}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        {formatDate(swipe.timestamp)}
                       </span>
                     </div>
                   </div>
